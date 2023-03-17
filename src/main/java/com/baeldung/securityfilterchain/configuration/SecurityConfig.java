@@ -19,37 +19,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // ...
-                .authorizeHttpRequests(authorize -> authorize
+        http.formLogin(form -> form
+                .loginPage("/login")
+                .permitAll()
+        ).authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
-                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole()
                         .anyRequest().authenticated()
-                        // .requestMatchers("/db/**").access(AuthorizationManagers.allOf(AuthorityAuthorizationManager.hasRole("ADMIN"), AuthorityAuthorizationManager.hasRole("DBA")))
                         .anyRequest().denyAll()
                 );
-        /*
-        http.csrf()
-          .disable()
-          .authorizeRequests()
-                .requestMatchers(HttpMethod.DELETE)
-                .hasRole("ADMIN")
-          .requestMatchers("/admin/**")
-          .hasRole("ADMIN")
-          .requestMatchers("/user/**")
-          .hasAnyRole()
-          .requestMatchers("/login/**")
-          .anonymous()
-          .anyRequest()
-          .authenticated()
-          .and()
-          .httpBasic()
-          .and()
-          .sessionManagement()
-          .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-*/
         return http.build();
     }
 
